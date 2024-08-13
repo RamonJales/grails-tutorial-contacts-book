@@ -1,6 +1,7 @@
 package com.hmtmcse.ocb
 
 import grails.web.servlet.mvc.GrailsParameterMap
+import org.springframework.validation.BindingResult
 
 import javax.servlet.http.HttpServletRequest
 
@@ -12,7 +13,7 @@ class ContactService {
 
     def save(GrailsParameterMap params, HttpServletRequest request) {
         Contact contact = new Contact(params)
-        contact.member = authenticationService.getMember()
+        contact.member = authenticationService.getMember() as Member
         def response = AppUtil.saveResponse(false, contact)
         if (contact.validate()) {
             contact.save(flush: true)
@@ -63,6 +64,8 @@ class ContactService {
     def delete(Contact contact) {
         try {
             contact.delete(flush: true)
+            String imageNameComplete = "${contact.id}-${contact.image}"
+            boolean result = FileUtil.deleteContactImage(imageNameComplete)
         } catch (Exception e) {
             println(e.getMessage())
             return false
