@@ -67,6 +67,11 @@ class ContactDetailsService {
     }
 
     private def saveOrUpdate(def map){
+
+        if (!map.mobile && !map.phone && !map.email && !map.website && !map.address) {
+            throw new IllegalArgumentException("At least one contact detail must be provided")
+        }
+
         ContactDetails contactDetails
         if (map && map.id) {
             contactDetails = getById(map.id) ?: new ContactDetails()
